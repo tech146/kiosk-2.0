@@ -17,13 +17,13 @@ import {
 /* -------------------------------------------------------------------------- */
 
 type Screen = "welcome" | "options" | "inquiry" | "delivery";
-type EnquiryType = "General Enquiry" | "Tenant Enquiry";
+type EnquiryType = "General Enquiry" | "tenants Enquiry";
 type DeliveryStep = 1 | 2 | 3 | 4;
 type PackageType = "Parcel" | "Envelope" | "Food Delivery" | "Large Delivery" | "Other";
-type TenantLookupStatus = "loading" | "ready" | "empty" | "error";
+type tenantsLookupStatus = "loading" | "ready" | "empty" | "error";
 type DeliveryEmailStatus = "idle" | "sending" | "sent" | "error";
 
-type Tenant = {
+type tenants = {
   businessName: string;
   contactName: string;
   email: string;
@@ -83,13 +83,13 @@ const OPTIONS = [
       "Help with directions, facilities, bookings, visitor questions, and general assistance.",
   },
   {
-    title: "Tenant Enquiry",
+    title: "tenants Enquiry",
     description:
-      "Contact a Tenant | Appointments & Meetings | General Tenant Enquiries.",
+      "Contact a tenants | Appointments & Meetings | General tenants Enquiries.",
   },
   {
     title: "Delivery",
-    description: "Register a delivery for a Tenant or recipient.",
+    description: "Register a delivery for a tenants or recipient.",
   },
 ] as const;
 
@@ -174,12 +174,12 @@ const GENERAL_INQUIRY_TOPICS: GeneralInquiryTopic[] = [
   },
 ];
 
-const TENANT_CSV_PATHS = ["/kiosk/tenants.csv", "/kiosk/Tenant.csv", "/kiosk/tenant.csv"] as const;
+
 
 const FIELD_ALIASES = {
   businessName: [
-    "Tenant Name",
-    "Tenant",
+    "tenants Name",
+    "tenants",
     "Business",
     "Business Name",
     "Company",
@@ -283,7 +283,7 @@ function parseCsvRows(text: string) {
   return rows;
 }
 
-function parseTenantsCsv(text: string): Tenant[] {
+function parsetenantssCsv(text: string): tenants[] {
   const rows = parseCsvRows(text);
   const [headers = [], ...dataRows] = rows;
   const trimmedHeaders = headers.map((header) => header.replace(/^\uFEFF/, "").trim());
@@ -305,7 +305,7 @@ function parseTenantsCsv(text: string): Tenant[] {
         rawValues,
       };
     })
-    .filter((tenant) => tenant.businessName || tenant.contactName);
+    .filter((tenants) => tenants.businessName || tenants.contactName);
 }
 
 function chooseVoice(voices: SpeechSynthesisVoice[]) {
@@ -371,7 +371,7 @@ function buildDeliveryEmailBody(form: DeliveryForm, slip: DeliverySlip, courierD
     `Courier / Full Name: ${delivery.courier}`,
     `Recipient Business: ${delivery.recipientBusiness || "—"}`,
     `Recipient Full Name: ${delivery.recipientFullName || "—"}`,
-    `Recipient Email from tenant list: ${delivery.recipientEmail || "—"}`,
+    `Recipient Email from tenants list: ${delivery.recipientEmail || "—"}`,
     `Item Type: ${delivery.packageType || "—"}`,
     "",
     "Parcel Box Instructions:",
@@ -570,21 +570,21 @@ export default function App() {
   const [confirmTimeoutRemaining, setConfirmTimeoutRemaining] = useState<number>(CONFIG.timeoutSeconds);
 
   const [currentDateTime, setCurrentDateTime] = useState("");
-  const [tenants, setTenants] = useState<Tenant[]>([]);
-  const [tenantSearchResults, setTenantSearchResults] = useState<Tenant[]>([]);
-  const [tenantLookupStatus, setTenantLookupStatus] = useState<TenantLookupStatus>("loading");
+  const [tenantss, settenantss] = useState<tenants[]>([]);
+  const [tenantsSearchResults, settenantsSearchResults] = useState<tenants[]>([]);
+  const [tenantsLookupStatus, settenantsLookupStatus] = useState<tenantsLookupStatus>("loading");
   const [recipientKeyboardLocked, setRecipientKeyboardLocked] = useState(false);
-  const [tenantInquiryQuery, setTenantInquiryQuery] = useState("");
-  const [tenantInquiryResults, setTenantInquiryResults] = useState<Tenant[]>([]);
-  const [selectedTenantInquiry, setSelectedTenantInquiry] = useState<Tenant | null>(null);
-  const [tenantInquiryKeyboardLocked, setTenantInquiryKeyboardLocked] = useState(false);
+  const [tenantsInquiryQuery, settenantsInquiryQuery] = useState("");
+  const [tenantsInquiryResults, settenantsInquiryResults] = useState<tenants[]>([]);
+  const [selectedtenantsInquiry, setSelectedtenantsInquiry] = useState<tenants | null>(null);
+  const [tenantsInquiryKeyboardLocked, settenantsInquiryKeyboardLocked] = useState(false);
 
   const [generalInquiryTopicId, setGeneralInquiryTopicId] = useState("bookings");
 
   const voicesRef = useRef<SpeechSynthesisVoice[]>([]);
   const recipientSearchInputRef = useRef<HTMLInputElement>(null);
-  const tenantInquiryInputRef = useRef<HTMLInputElement>(null);
-  const tenantInquiryPointerStartYRef = useRef<number | null>(null);
+  const tenantsInquiryInputRef = useRef<HTMLInputElement>(null);
+  const tenantsInquiryPointerStartYRef = useRef<number | null>(null);
 
   const updateField = useCallback(<K extends keyof DeliveryForm>(field: K, value: DeliveryForm[K]) => {
     setDeliveryForm((current) => ({ ...current, [field]: value }));
@@ -598,7 +598,7 @@ export default function App() {
     setDeliveryEmailError("");
     setConfirmTimeoutActive(false);
     setConfirmTimeoutRemaining(CONFIG.timeoutSeconds);
-    setTenantSearchResults([]);
+    settenantsSearchResults([]);
     setRecipientKeyboardLocked(false);
   }, []);
 
@@ -615,10 +615,10 @@ export default function App() {
     setSelectedOption(null);
     setEnquiryType(null);
     resetGeneralInquiry();
-    setTenantInquiryQuery("");
-    setTenantInquiryResults([]);
-    setSelectedTenantInquiry(null);
-    setTenantInquiryKeyboardLocked(false);
+    settenantsInquiryQuery("");
+    settenantsInquiryResults([]);
+    setSelectedtenantsInquiry(null);
+    settenantsInquiryKeyboardLocked(false);
     resetDelivery();
     setScreen("welcome");
   }, [resetDelivery, resetGeneralInquiry]);
@@ -636,20 +636,20 @@ export default function App() {
   useEffect(() => {
     let cancelled = false;
 
-    async function loadTenants() {
-      setTenantLookupStatus("loading");
+    async function loadtenantss() {
+      settenantsLookupStatus("loading");
 
-      for (const path of TENANT_CSV_PATHS) {
+      for (const path of tenants_CSV_PATHS) {
         try {
           const response = await fetch(`${path}?v=${Date.now()}`, { cache: "no-store" });
           if (!response.ok) continue;
 
           const text = await response.text();
-          const parsedTenants = parseTenantsCsv(text);
+          const parsedtenantss = parsetenantssCsv(text);
 
           if (!cancelled) {
-            setTenants(parsedTenants);
-            setTenantLookupStatus(parsedTenants.length ? "ready" : "empty");
+            settenantss(parsedtenantss);
+            settenantsLookupStatus(parsedtenantss.length ? "ready" : "empty");
           }
           return;
         } catch {
@@ -658,12 +658,12 @@ export default function App() {
       }
 
       if (!cancelled) {
-        setTenants([]);
-        setTenantLookupStatus("error");
+        settenantss([]);
+        settenantsLookupStatus("error");
       }
     }
 
-    loadTenants();
+    loadtenantss();
 
     return () => {
       cancelled = true;
@@ -696,9 +696,9 @@ export default function App() {
   }, [enquiryType, screen]);
 
   useEffect(() => {
-    if (screen !== "inquiry" || enquiryType !== "Tenant Enquiry") return;
+    if (screen !== "inquiry" || enquiryType !== "tenants Enquiry") return;
 
-    // Tenant Inquiry should not inherit the delivery receipt timeout.
+    // tenants Inquiry should not inherit the delivery receipt timeout.
     // The app-wide idle timeout below handles returning to the welcome screen.
     setConfirmTimeoutActive(false);
     setConfirmTimeoutRemaining(CONFIG.timeoutSeconds);
@@ -828,7 +828,7 @@ export default function App() {
   const speakGreeting = useCallback(() => {
     // Open the options page immediately, but do not send the app back to
     // options when the welcome voice finishes. Otherwise, if a visitor taps
-    // General Enquiry or Tenant Enquiry while the greeting is still speaking,
+    // General Enquiry or tenants Enquiry while the greeting is still speaking,
     // the speech onFinish callback can close that enquiry page a few seconds later.
     setScreen("options");
     speak(CONFIG.greeting);
@@ -852,20 +852,20 @@ export default function App() {
 
       const query = normaliseSearch(value);
       if (!query) {
-        setTenantSearchResults([]);
+        settenantsSearchResults([]);
         return;
       }
 
-      const matches = tenants.filter((tenant) => {
+      const matches = tenantss.filter((tenants) => {
         const haystack = normaliseSearch(
-          [tenant.businessName, tenant.contactName, tenant.email, tenant.phone, ...tenant.rawValues].join(" ")
+          [tenants.businessName, tenants.contactName, tenants.email, tenants.phone, ...tenants.rawValues].join(" ")
         );
         return haystack.includes(query);
       });
 
-      setTenantSearchResults(matches.slice(0, 30));
+      settenantsSearchResults(matches.slice(0, 30));
     },
-    [tenants, updateField]
+    [tenantss, updateField]
   );
 
   const hideRecipientKeyboard = useCallback(() => {
@@ -891,16 +891,16 @@ export default function App() {
     });
   }, []);
 
-  const selectTenant = useCallback(
-    (tenant: Tenant) => {
+  const selecttenants = useCallback(
+    (tenants: tenants) => {
       setRecipientKeyboardLocked(true);
       setDeliveryForm((current) => ({
         ...current,
-        recipientBusiness: tenant.businessName,
-        recipientFullName: tenant.contactName,
-        recipientEmail: tenant.email,
+        recipientBusiness: tenants.businessName,
+        recipientFullName: tenants.contactName,
+        recipientEmail: tenants.email,
       }));
-      setTenantSearchResults([]);
+      settenantsSearchResults([]);
       hideRecipientKeyboard();
     },
     [hideRecipientKeyboard]
@@ -914,7 +914,7 @@ export default function App() {
         recipientFullName: "",
         recipientEmail: "",
       }));
-      setTenantSearchResults([]);
+      settenantsSearchResults([]);
       setRecipientKeyboardLocked(false);
       setDeliveryStep(1);
       return;
@@ -974,32 +974,32 @@ export default function App() {
     setScreen("delivery");
   }, [resetDelivery]);
 
-  const handleTenantInquirySearch = useCallback(
+  const handletenantsInquirySearch = useCallback(
     (value: string) => {
-      setTenantInquiryKeyboardLocked(false);
-      setTenantInquiryQuery(value);
-      setSelectedTenantInquiry(null);
+      settenantsInquiryKeyboardLocked(false);
+      settenantsInquiryQuery(value);
+      setSelectedtenantsInquiry(null);
 
       const query = normaliseSearch(value);
       if (query.length < 3) {
-        setTenantInquiryResults([]);
+        settenantsInquiryResults([]);
         return;
       }
 
-      const matches = tenants.filter((tenant) => {
+      const matches = tenantss.filter((tenants) => {
         const haystack = normaliseSearch(
-          [tenant.businessName, tenant.contactName, tenant.email, tenant.phone, ...tenant.rawValues].join(" ")
+          [tenants.businessName, tenants.contactName, tenants.email, tenants.phone, ...tenants.rawValues].join(" ")
         );
         return haystack.includes(query);
       });
 
-      setTenantInquiryResults(matches.slice(0, 30));
+      settenantsInquiryResults(matches.slice(0, 30));
     },
-    [tenants]
+    [tenantss]
   );
 
-  const hideTenantInquiryKeyboard = useCallback(() => {
-    const input = tenantInquiryInputRef.current;
+  const hidetenantsInquiryKeyboard = useCallback(() => {
+    const input = tenantsInquiryInputRef.current;
 
     // iPad Safari is more reliable when the input is temporarily made read-only
     // before blurring. It unlocks again when the visitor taps inside the field.
@@ -1021,22 +1021,22 @@ export default function App() {
     });
   }, []);
 
-  const selectTenantInquiry = useCallback(
-    (tenant: Tenant) => {
-      setTenantInquiryKeyboardLocked(true);
-      setSelectedTenantInquiry(tenant);
-      setTenantInquiryQuery(tenant.businessName || tenant.contactName);
-      setTenantInquiryResults([]);
-      hideTenantInquiryKeyboard();
+  const selecttenantsInquiry = useCallback(
+    (tenants: tenants) => {
+      settenantsInquiryKeyboardLocked(true);
+      setSelectedtenantsInquiry(tenants);
+      settenantsInquiryQuery(tenants.businessName || tenants.contactName);
+      settenantsInquiryResults([]);
+      hidetenantsInquiryKeyboard();
     },
-    [hideTenantInquiryKeyboard]
+    [hidetenantsInquiryKeyboard]
   );
 
-  const resetTenantInquiry = useCallback(() => {
-    setTenantInquiryQuery("");
-    setTenantInquiryResults([]);
-    setSelectedTenantInquiry(null);
-    setTenantInquiryKeyboardLocked(false);
+  const resettenantsInquiry = useCallback(() => {
+    settenantsInquiryQuery("");
+    settenantsInquiryResults([]);
+    setSelectedtenantsInquiry(null);
+    settenantsInquiryKeyboardLocked(false);
   }, []);
 
   /* Screen renderers ------------------------------------------------------ */
@@ -1165,11 +1165,11 @@ export default function App() {
                   }
                   setIsSpeaking(false);
 
-                  if (option.title === "Tenant Enquiry") {
-                    setTenantInquiryQuery("");
-                    setTenantInquiryResults([]);
-                    setSelectedTenantInquiry(null);
-                    setTenantInquiryKeyboardLocked(false);
+                  if (option.title === "tenants Enquiry") {
+                    settenantsInquiryQuery("");
+                    settenantsInquiryResults([]);
+                    setSelectedtenantsInquiry(null);
+                    settenantsInquiryKeyboardLocked(false);
                   }
 
                   setEnquiryType(option.title as EnquiryType);
@@ -1214,10 +1214,10 @@ export default function App() {
 
 
   const renderInquiryScreen = () => {
-    if (enquiryType === "Tenant Enquiry") {
+    if (enquiryType === "tenants Enquiry") {
       return (
         <motion.section
-          key="tenant-inquiry"
+          key="tenants-inquiry"
           initial={{ opacity: 0, x: 24 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -24 }}
@@ -1229,7 +1229,7 @@ export default function App() {
           <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-b border-sky-200/70 px-6 py-5 md:px-8 md:py-6">
             <div>
               <p className="text-xs uppercase tracking-[0.34em] text-slate-500">{CONFIG.businessName}</p>
-              <h2 className="text-2xl font-semibold text-slate-950">Tenant Inquiry</h2>
+              <h2 className="text-2xl font-semibold text-slate-950">tenants Inquiry</h2>
             </div>
             <HomeButton onHome={resetToWelcome} />
           </div>
@@ -1237,68 +1237,68 @@ export default function App() {
           <div className="relative z-10 flex flex-1 items-start justify-center px-6 py-6 md:px-8 md:py-8">
             <div className="grid w-full max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[1fr_0.95fr]">
               <div className="rounded-[2rem] border border-sky-200/70 bg-white/80 p-8 text-slate-950 shadow-2xl backdrop-blur-xl">
-                <p className="text-sm uppercase tracking-[0.34em] text-slate-500">Tenant lookup</p>
-                <h3 className="mt-3 text-4xl font-semibold tracking-tight">Find a tenant</h3>
+                <p className="text-sm uppercase tracking-[0.34em] text-slate-500">tenants lookup</p>
+                <h3 className="mt-3 text-4xl font-semibold tracking-tight">Find a tenants</h3>
                 <p className="mt-4 text-xl leading-8 text-slate-600">
-                  Type at least three letters of the business name or contact name, then select the tenant from the list.
+                  Type at least three letters of the business name or contact name, then select the tenants from the list.
                 </p>
 
                 <div className="mt-8 space-y-4">
                   <Field label="Business Name or Contact Name">
                     <div className="relative">
                       <TextInput
-                        ref={tenantInquiryInputRef}
-                        value={tenantInquiryQuery}
+                        ref={tenantsInquiryInputRef}
+                        value={tenantsInquiryQuery}
                         onChange={(event) => {
                           const value = event.target.value;
-                          handleTenantInquirySearch(value);
+                          handletenantsInquirySearch(value);
 
                           if (value.trim().length >= 3) {
-                            setTenantInquiryKeyboardLocked(true);
-                            hideTenantInquiryKeyboard();
+                            settenantsInquiryKeyboardLocked(true);
+                            hidetenantsInquiryKeyboard();
                           }
                         }}
                         onPointerDownCapture={(event) => {
-                          if (tenantInquiryKeyboardLocked) {
-                            setTenantInquiryKeyboardLocked(false);
+                          if (tenantsInquiryKeyboardLocked) {
+                            settenantsInquiryKeyboardLocked(false);
                             event.currentTarget.removeAttribute("readonly");
                             event.currentTarget.setAttribute("inputmode", "text");
                             window.setTimeout(() => event.currentTarget.focus(), 0);
                           }
                         }}
                         onFocus={(event) => {
-                          setTenantInquiryKeyboardLocked(false);
-                          handleTenantInquirySearch(event.currentTarget.value);
+                          settenantsInquiryKeyboardLocked(false);
+                          handletenantsInquirySearch(event.currentTarget.value);
                         }}
                         placeholder="Start typing business or contact name"
                         autoComplete="off"
-                        readOnly={tenantInquiryKeyboardLocked}
-                        inputMode={tenantInquiryKeyboardLocked ? "none" : "text"}
+                        readOnly={tenantsInquiryKeyboardLocked}
+                        inputMode={tenantsInquiryKeyboardLocked ? "none" : "text"}
                         className="min-h-[5rem] px-6 text-2xl md:text-3xl"
                       />
 
-                      {tenantInquiryResults.length > 0 && (
+                      {tenantsInquiryResults.length > 0 && (
                         <div className="absolute z-30 mt-3 max-h-[22rem] w-full overflow-y-scroll rounded-3xl border border-sky-200/80 bg-white/95 p-2 shadow-2xl backdrop-blur-xl touch-pan-y overscroll-contain [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:w-3 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/30 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-white/80">
-                          {tenantInquiryResults.map((tenant, index) => (
+                          {tenantsInquiryResults.map((tenants, index) => (
                             <button
-                              key={`${tenant.businessName}-${tenant.contactName}-${index}`}
+                              key={`${tenants.businessName}-${tenants.contactName}-${index}`}
                               type="button"
                               onPointerDown={(event) => {
-                                tenantInquiryPointerStartYRef.current = event.clientY;
+                                tenantsInquiryPointerStartYRef.current = event.clientY;
                               }}
                               onPointerUp={(event) => {
-                                const startY = tenantInquiryPointerStartYRef.current;
-                                tenantInquiryPointerStartYRef.current = null;
+                                const startY = tenantsInquiryPointerStartYRef.current;
+                                tenantsInquiryPointerStartYRef.current = null;
 
                                 if (startY === null || Math.abs(event.clientY - startY) <= 12) {
                                   event.preventDefault();
-                                  selectTenantInquiry(tenant);
+                                  selecttenantsInquiry(tenants);
                                 }
                               }}
                               className="w-full rounded-2xl px-4 py-4 text-left transition hover:bg-white/80 active:bg-sky-100/80"
                             >
-                              <div className="text-lg font-semibold text-slate-950">{tenant.businessName || "Unnamed business"}</div>
-                              <div className="mt-1 text-base text-slate-500">{tenant.contactName || "No contact name listed"}</div>
+                              <div className="text-lg font-semibold text-slate-950">{tenants.businessName || "Unnamed business"}</div>
+                              <div className="mt-1 text-base text-slate-500">{tenants.contactName || "No contact name listed"}</div>
                             </button>
                           ))}
                         </div>
@@ -1306,61 +1306,61 @@ export default function App() {
                     </div>
                   </Field>
 
-                  {tenantLookupStatus === "loading" && <p className="text-slate-500">Loading tenant list…</p>}
-                  {tenantLookupStatus === "empty" && <p className="text-amber-700">Tenant CSV loaded, but no usable tenant rows were found.</p>}
-                  {tenantLookupStatus === "error" && <p className="text-rose-700">Tenant CSV not found. Put tenants.csv in the public folder.</p>}
-                  {tenantLookupStatus === "ready" && tenantInquiryQuery.trim().length > 0 && tenantInquiryQuery.trim().length < 3 && (
-                    <p className="text-slate-500">Type at least 3 letters to search the tenant list.</p>
+                  {tenantsLookupStatus === "loading" && <p className="text-slate-500">Loading tenants list…</p>}
+                  {tenantsLookupStatus === "empty" && <p className="text-amber-700">tenants CSV loaded, but no usable tenants rows were found.</p>}
+                  {tenantsLookupStatus === "error" && <p className="text-rose-700">tenants CSV not found. Put tenantss.csv in the public folder.</p>}
+                  {tenantsLookupStatus === "ready" && tenantsInquiryQuery.trim().length > 0 && tenantsInquiryQuery.trim().length < 3 && (
+                    <p className="text-slate-500">Type at least 3 letters to search the tenants list.</p>
                   )}
-                  {tenantLookupStatus === "ready" && tenantInquiryQuery.trim().length >= 3 && tenantInquiryResults.length === 0 && !selectedTenantInquiry && (
-                    <p className="text-slate-500">No matching tenants found. Try a different business or contact name.</p>
+                  {tenantsLookupStatus === "ready" && tenantsInquiryQuery.trim().length >= 3 && tenantsInquiryResults.length === 0 && !selectedtenantsInquiry && (
+                    <p className="text-slate-500">No matching tenantss found. Try a different business or contact name.</p>
                   )}
                 </div>
               </div>
 
               <div className="rounded-[2rem] border border-sky-200/70 bg-white/80 p-8 text-slate-950 shadow-2xl backdrop-blur-xl">
-                <p className="text-sm uppercase tracking-[0.34em] text-slate-500">Tenant contact details</p>
+                <p className="text-sm uppercase tracking-[0.34em] text-slate-500">tenants contact details</p>
 
-                {selectedTenantInquiry ? (
+                {selectedtenantsInquiry ? (
                   <div className="mt-6 space-y-6">
                     <div className="rounded-3xl border border-sky-200/70 bg-white/80 p-6">
                       <p className="text-sm uppercase tracking-[0.28em] text-slate-500">Business</p>
-                      <h3 className="mt-3 text-3xl font-semibold text-slate-950">{selectedTenantInquiry.businessName || "—"}</h3>
-                      <p className="mt-2 text-xl text-slate-600">{selectedTenantInquiry.contactName || "No contact name listed"}</p>
+                      <h3 className="mt-3 text-3xl font-semibold text-slate-950">{selectedtenantsInquiry.businessName || "—"}</h3>
+                      <p className="mt-2 text-xl text-slate-600">{selectedtenantsInquiry.contactName || "No contact name listed"}</p>
                     </div>
 
                     <div className="grid grid-cols-1 gap-4">
-                      {selectedTenantInquiry.phone ? (
+                      {selectedtenantsInquiry.phone ? (
                         <InfoPill
                           icon={Phone}
                           label="Call"
-                          value={selectedTenantInquiry.phone}
-                          href={phoneHref(selectedTenantInquiry.phone)}
-                          ariaLabel={`Call ${selectedTenantInquiry.businessName || selectedTenantInquiry.contactName} on ${selectedTenantInquiry.phone}`}
+                          value={selectedtenantsInquiry.phone}
+                          href={phoneHref(selectedtenantsInquiry.phone)}
+                          ariaLabel={`Call ${selectedtenantsInquiry.businessName || selectedtenantsInquiry.contactName} on ${selectedtenantsInquiry.phone}`}
                           primary
                         />
                       ) : (
                         <SummaryCard label="Phone" value="No phone number listed" />
                       )}
 
-                      {selectedTenantInquiry.email ? (
+                      {selectedtenantsInquiry.email ? (
                         <InfoPill
                           icon={Mail}
                           label="Email"
-                          value={selectedTenantInquiry.email}
+                          value={selectedtenantsInquiry.email}
                         />
                       ) : (
                         <SummaryCard label="Email" value="No email address listed" />
                       )}
                     </div>
 
-                    <SecondaryButton className="w-full" onClick={resetTenantInquiry}>
-                      Search for Another Tenant
+                    <SecondaryButton className="w-full" onClick={resettenantsInquiry}>
+                      Search for Another tenants
                     </SecondaryButton>
                   </div>
                 ) : (
                   <div className="mt-6 rounded-3xl border border-sky-200/70 bg-white/60 p-6 text-slate-600">
-                    <p className="text-xl leading-8">Tenant contact details will appear here after you select a tenant.</p>
+                    <p className="text-xl leading-8">tenants contact details will appear here after you select a tenants.</p>
                   </div>
                 )}
               </div>
@@ -1566,20 +1566,20 @@ export default function App() {
                 inputMode={recipientKeyboardLocked ? "none" : "text"}
               />
 
-              {tenantSearchResults.length > 0 && (
+              {tenantsSearchResults.length > 0 && (
                 <div className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-30 max-h-[22rem] touch-pan-y overflow-y-scroll overscroll-contain rounded-3xl border border-sky-200/80 bg-white/95 p-2 pr-4 shadow-2xl backdrop-blur-xl [-webkit-overflow-scrolling:touch] [scrollbar-gutter:stable] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-white/35 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-white/80 [&::-webkit-scrollbar]:w-3">
-                  {tenantSearchResults.map((tenant, index) => (
+                  {tenantsSearchResults.map((tenants, index) => (
                     <button
-                      key={`${tenant.businessName}-${tenant.contactName}-${index}`}
+                      key={`${tenants.businessName}-${tenants.contactName}-${index}`}
                       type="button"
-                      onClick={() => selectTenant(tenant)}
+                      onClick={() => selecttenants(tenants)}
                       onTouchEnd={() => window.setTimeout(hideRecipientKeyboard, 0)}
                       className="block w-full rounded-2xl px-4 py-4 text-left transition hover:bg-white/80 active:bg-sky-100/80"
                     >
-                      <div className="text-lg font-semibold text-slate-950">{tenant.businessName || tenant.contactName}</div>
-                      {tenant.businessName && tenant.contactName && <div className="mt-1 text-base text-slate-600">{tenant.contactName}</div>}
-                      {(tenant.email || tenant.phone) && (
-                        <div className="mt-2 text-sm text-slate-400">{[tenant.email, tenant.phone].filter(Boolean).join(" · ")}</div>
+                      <div className="text-lg font-semibold text-slate-950">{tenants.businessName || tenants.contactName}</div>
+                      {tenants.businessName && tenants.contactName && <div className="mt-1 text-base text-slate-600">{tenants.contactName}</div>}
+                      {(tenants.email || tenants.phone) && (
+                        <div className="mt-2 text-sm text-slate-400">{[tenants.email, tenants.phone].filter(Boolean).join(" · ")}</div>
                       )}
                     </button>
                   ))}
@@ -1588,12 +1588,12 @@ export default function App() {
             </div>
           </Field>
 
-          {tenantLookupStatus === "loading" && <p className="text-sm text-slate-500">Loading tenant list…</p>}
-          {tenantLookupStatus === "ready" && <p className="text-sm text-slate-500">Tenant list loaded: {tenants.length} records.</p>}
-          {tenantLookupStatus === "empty" && <p className="text-sm text-amber-700">Tenant CSV loaded, but no usable tenant rows were found.</p>}
-          {tenantLookupStatus === "error" && <p className="text-sm text-amber-700">Tenant CSV not found. Put Tenant.csv or tenants.csv in the public folder.</p>}
-          {tenantLookupStatus === "ready" && deliveryForm.recipientBusiness && tenantSearchResults.length === 0 && !deliveryForm.recipientFullName && (
-            <p className="text-sm text-slate-500">No matching tenant selected yet. You can still enter details manually.</p>
+          {tenantsLookupStatus === "loading" && <p className="text-sm text-slate-500">Loading tenants list…</p>}
+          {tenantsLookupStatus === "ready" && <p className="text-sm text-slate-500">tenants list loaded: {tenantss.length} records.</p>}
+          {tenantsLookupStatus === "empty" && <p className="text-sm text-amber-700">tenants CSV loaded, but no usable tenants rows were found.</p>}
+          {tenantsLookupStatus === "error" && <p className="text-sm text-amber-700">tenants CSV not found. Put tenants.csv or tenantss.csv in the public folder.</p>}
+          {tenantsLookupStatus === "ready" && deliveryForm.recipientBusiness && tenantsSearchResults.length === 0 && !deliveryForm.recipientFullName && (
+            <p className="text-sm text-slate-500">No matching tenants selected yet. You can still enter details manually.</p>
           )}
 
           <Field label="Full Name">
