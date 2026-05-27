@@ -176,6 +176,8 @@ const GENERAL_INQUIRY_TOPICS: GeneralInquiryTopic[] = [
 
 
 
+const TENANT_CSV_PATHS = ["/tenants.csv", "/Tenant.csv", "/tenant.csv"] as const;
+
 const FIELD_ALIASES = {
   businessName: [
     "tenants Name",
