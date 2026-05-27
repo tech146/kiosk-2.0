@@ -4,9 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-   "dev": "vite --host",
-  "build": "vite build",
-  "preview": "vite preview"
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.2.4",
@@ -22,6 +22,7 @@
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vercel/node": "^5.8.6",
     "autoprefixer": "^10.5.0",
     "postcss": "^8.5.10",
     "tailwindcss": "^4.2.4"
