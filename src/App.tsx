@@ -1515,15 +1515,6 @@ export default function App() {
             </Field>
           </div>
 
-          {deliveryForm.courierCompany === "Other / Individual" && (
-            <Field label="Individual Name">
-              <TextInput
-                value={deliveryForm.courierName}
-                onChange={(event) => updateField("courierName", event.target.value)}
-                placeholder="e.g. John Smith"
-              />
-            </Field>
-          )}
         </div>
       );
     }
@@ -1692,9 +1683,20 @@ export default function App() {
             )}
 
             {deliveryStep === 1 && (
-              <PrimaryButton className="w-full" onClick={() => setDeliveryStep(2)} disabled={!canStep1}>
-                Continue to Recipient
-              </PrimaryButton>
+              <>
+                {deliveryForm.courierCompany === "Other / Individual" && (
+                  <Field label="Individual Name">
+                    <TextInput
+                      value={deliveryForm.courierName}
+                      onChange={(event) => updateField("courierName", event.target.value)}
+                      placeholder="e.g. John Smith"
+                    />
+                  </Field>
+                )}
+                <PrimaryButton className="w-full" onClick={() => setDeliveryStep(2)} disabled={!canStep1}>
+                  Continue to Recipient
+                </PrimaryButton>
+              </>
             )}
 
             {deliveryStep === 2 && (
