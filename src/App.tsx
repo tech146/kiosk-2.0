@@ -85,11 +85,11 @@ const OPTIONS = [
   {
     title: "Tenant Enquiry",
     description:
-      "Contact a tenants | Appointments & Meetings | General tenants Enquiries.",
+      "Contact a Tenant | Appointments & Meetings | General Tenant Enquiries.",
   },
   {
     title: "Delivery",
-    description: "Register a delivery for a tenants or recipient.",
+    description: "Register a delivery for a Tenant or recipient.",
   },
 ] as const;
 
@@ -641,7 +641,7 @@ export default function App() {
     async function loadtenantss() {
       settenantsLookupStatus("loading");
 
-      for (const path of TENANT_CSV_PATHS) {
+      for (const path of tenants_CSV_PATHS) {
         try {
           const response = await fetch(`${path}?v=${Date.now()}`, { cache: "no-store" });
           if (!response.ok) continue;
@@ -698,7 +698,7 @@ export default function App() {
   }, [enquiryType, screen]);
 
   useEffect(() => {
-    if (screen !== "inquiry" || enquiryType !== "Tenant Enquiry") return;
+    if (screen !== "inquiry" || enquiryType !== "tenants Enquiry") return;
 
     // tenants Inquiry should not inherit the delivery receipt timeout.
     // The app-wide idle timeout below handles returning to the welcome screen.
@@ -830,7 +830,7 @@ export default function App() {
   const speakGreeting = useCallback(() => {
     // Open the options page immediately, but do not send the app back to
     // options when the welcome voice finishes. Otherwise, if a visitor taps
-    // General Enquiry or Tenant Enquiry while the greeting is still speaking,
+    // General Enquiry or tenants Enquiry while the greeting is still speaking,
     // the speech onFinish callback can close that enquiry page a few seconds later.
     setScreen("options");
     speak(CONFIG.greeting);
@@ -1167,7 +1167,7 @@ export default function App() {
                   }
                   setIsSpeaking(false);
 
-                  if (option.title === "Tenant Enquiry") {
+                  if (option.title === "tenants Enquiry") {
                     settenantsInquiryQuery("");
                     settenantsInquiryResults([]);
                     setSelectedtenantsInquiry(null);
@@ -1216,7 +1216,7 @@ export default function App() {
 
 
   const renderInquiryScreen = () => {
-    if (enquiryType === "Tenant Enquiry") {
+    if (enquiryType === "tenants Enquiry") {
       return (
         <motion.section
           key="tenants-inquiry"
@@ -1231,7 +1231,7 @@ export default function App() {
           <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-b border-sky-200/70 px-6 py-5 md:px-8 md:py-6">
             <div>
               <p className="text-xs uppercase tracking-[0.34em] text-slate-500">{CONFIG.businessName}</p>
-              <h2 className="text-2xl font-semibold text-slate-950">tenants Inquiry</h2>
+              <h2 className="text-2xl font-semibold text-slate-950">Tenant Inquiry</h2>
             </div>
             <HomeButton onHome={resetToWelcome} />
           </div>
@@ -1239,10 +1239,10 @@ export default function App() {
           <div className="relative z-10 flex flex-1 items-start justify-center px-6 py-6 md:px-8 md:py-8">
             <div className="grid w-full max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[1fr_0.95fr]">
               <div className="rounded-[2rem] border border-sky-200/70 bg-white/80 p-8 text-slate-950 shadow-2xl backdrop-blur-xl">
-                <p className="text-sm uppercase tracking-[0.34em] text-slate-500">tenants lookup</p>
+                <p className="text-sm uppercase tracking-[0.34em] text-slate-500">Tenant lookup</p>
                 <h3 className="mt-3 text-4xl font-semibold tracking-tight">Find a Tenant</h3>
                 <p className="mt-4 text-xl leading-8 text-slate-600">
-                  Type at least three letters of the business name or contact name, then select the tenants from the list.
+                  Type at least three letters of the business name or contact name, then select the tenant from the list.
                 </p>
 
                 <div className="mt-8 space-y-4">
