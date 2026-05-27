@@ -17,7 +17,7 @@ import {
 /* -------------------------------------------------------------------------- */
 
 type Screen = "welcome" | "options" | "inquiry" | "delivery";
-type EnquiryType = "General Enquiry" | "tenants Enquiry";
+type EnquiryType = "General Enquiry" | "Tenant Enquiry";
 type DeliveryStep = 1 | 2 | 3 | 4;
 type PackageType = "Parcel" | "Envelope" | "Food Delivery" | "Large Delivery" | "Other";
 type tenantsLookupStatus = "loading" | "ready" | "empty" | "error";
@@ -83,7 +83,7 @@ const OPTIONS = [
       "Help with directions, facilities, bookings, visitor questions, and general assistance.",
   },
   {
-    title: "tenants Enquiry",
+    title: "Tenant Enquiry",
     description:
       "Contact a tenants | Appointments & Meetings | General tenants Enquiries.",
   },
@@ -641,7 +641,7 @@ export default function App() {
     async function loadtenantss() {
       settenantsLookupStatus("loading");
 
-      for (const path of tenants_CSV_PATHS) {
+      for (const path of TENANT_CSV_PATHS) {
         try {
           const response = await fetch(`${path}?v=${Date.now()}`, { cache: "no-store" });
           if (!response.ok) continue;
@@ -698,7 +698,7 @@ export default function App() {
   }, [enquiryType, screen]);
 
   useEffect(() => {
-    if (screen !== "inquiry" || enquiryType !== "tenants Enquiry") return;
+    if (screen !== "inquiry" || enquiryType !== "Tenant Enquiry") return;
 
     // tenants Inquiry should not inherit the delivery receipt timeout.
     // The app-wide idle timeout below handles returning to the welcome screen.
@@ -830,7 +830,7 @@ export default function App() {
   const speakGreeting = useCallback(() => {
     // Open the options page immediately, but do not send the app back to
     // options when the welcome voice finishes. Otherwise, if a visitor taps
-    // General Enquiry or tenants Enquiry while the greeting is still speaking,
+    // General Enquiry or Tenant Enquiry while the greeting is still speaking,
     // the speech onFinish callback can close that enquiry page a few seconds later.
     setScreen("options");
     speak(CONFIG.greeting);
@@ -1167,7 +1167,7 @@ export default function App() {
                   }
                   setIsSpeaking(false);
 
-                  if (option.title === "tenants Enquiry") {
+                  if (option.title === "Tenant Enquiry") {
                     settenantsInquiryQuery("");
                     settenantsInquiryResults([]);
                     setSelectedtenantsInquiry(null);
@@ -1216,7 +1216,7 @@ export default function App() {
 
 
   const renderInquiryScreen = () => {
-    if (enquiryType === "tenants Enquiry") {
+    if (enquiryType === "Tenant Enquiry") {
       return (
         <motion.section
           key="tenants-inquiry"
@@ -1240,7 +1240,7 @@ export default function App() {
             <div className="grid w-full max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[1fr_0.95fr]">
               <div className="rounded-[2rem] border border-sky-200/70 bg-white/80 p-8 text-slate-950 shadow-2xl backdrop-blur-xl">
                 <p className="text-sm uppercase tracking-[0.34em] text-slate-500">tenants lookup</p>
-                <h3 className="mt-3 text-4xl font-semibold tracking-tight">Find a tenants</h3>
+                <h3 className="mt-3 text-4xl font-semibold tracking-tight">Find a Tenant</h3>
                 <p className="mt-4 text-xl leading-8 text-slate-600">
                   Type at least three letters of the business name or contact name, then select the tenants from the list.
                 </p>
